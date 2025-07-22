@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const sanitizeHtml = require('sanitize-html'); // Add this line
 
 const app = express();
 const server = http.createServer(app);
@@ -18,6 +19,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chatMessage', (data) => {
+    data.message = sanitizeHtml(data.message, { allowedTags: [], allowedAttributes: {} }); // Sanitize message
     data.timestamp = Date.now();
     io.emit('message', data);
   });
